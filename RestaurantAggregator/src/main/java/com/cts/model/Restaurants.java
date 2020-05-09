@@ -1,5 +1,7 @@
 package com.cts.model;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -10,7 +12,7 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
-public class Restaurant{
+public class Restaurants{
 	private String restaurantId;
 	private String restaurantName;
 	private String restaurantAddress;
