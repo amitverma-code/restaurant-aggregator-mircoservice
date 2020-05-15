@@ -1,16 +1,23 @@
 package com.cts.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.cts.model.Menu;
+
+import com.cts.model.restaurant1.Items;
+import com.cts.model.restaurant1.Menu;
 import com.cts.model.Restaurants;
 import com.cts.properties.AppProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.cts.model.RestaurantMenu;
+import com.cts.model.AggregatorItems;
+import com.cts.model.AggregatorMenu;
+import com.cts.model.AggregatorPrice;
 
     @Service
     public class MenuService {
@@ -19,7 +26,11 @@ import com.cts.model.RestaurantMenu;
 	@Autowired
 	AppProperties appProperties;
 	
+	@Autowired
+	Restaurant1Service restaurant1Service;
 	
+	@Autowired
+	Restaurant2Service restaurant2Service;
 	@Autowired
 	RestTemplate restTemplate;
 	public List<Restaurants> getAllRestaurant(){
@@ -29,41 +40,53 @@ import com.cts.model.RestaurantMenu;
 	
   
     @HystrixCommand(fallbackMethod="getfallbackMenuDetails")
-    public RestaurantMenu getMenuDetails(String id){
-	Restaurants restaurants = restTemplate.getForObject(""+appProperties.getFullList()+"/"+id, Restaurants.class);
+    public AggregatorMenu  getMenuDetails(String id){
+	Restaurants restaurants = restTemplate.getForObject(""+appProperties.getById(), Restaurants.class);
+	AggregatorMenu aggregatorMenu=null;
+	if (restaurants!= null){
+	
 	if(id.equalsIgnoreCase("1399")) {
-		// fetch using url for 1399
-		//we have to use properties 
-		//invoke the url
-		//map the response to the menu.java for restr 1399
-		//this menu.java is compile version of tha pojo from 1399 swagger file
-		//covert this menu.java into aggregator's menu.java(this conversion is knowns as transformation)
+		
+		restaurant1Service.getMenu();
+	
 	}
 	else if(id.equalsIgnoreCase("5599")) {
-		// fetch using url for 1399
-				//we have to use properties 
-				//invoke the url
-				//map the response to the menu.java for restr 5599
-				//this menu.java is compile version of tha pojo from 5599 swagger file
-				//covert this menu.java into aggregator's menu.java(this conversion is knowns as transformation)
+		restaurant2Service.getMenu();
 	}
+	else {
+		return null;
+		//here we have to return string as menu not present for restaurant +id;
+	}
+	return aggregatorMenu;
+	
+	}
+	else
+	{
+		return null;
+		//here we have use exception and return string as restaurant not present in database +id
+	}
+	}
+    
+    public AggregatorMenu getfallbackMenuDetails(String id) {
+   	return null;
+     }
+	}
+
+	 
 	
 	
-	
-	
-	if(restaurants!= null) {
-    Menu menu = restTemplate.getForObject(""+appProperties.getMenu()+id+"/menu", Menu.class);
+	//if(restaurants!= null) {
+   // Menu menu = restTemplate.getForObject(""+appProperties.getMenu()+id+"/menu", Menu.class);
     // Menu menu = restTemplate.getForObject("localhost:abc/restaurant/"+id+"/menu", Menu.class);
     //using id we have to fetch menu.So map restaurant with menu using restaurant's id.
-    return new RestaurantMenu(restaurants.getRestaurantId(),restaurants.getRestaurantName(),menu.getId(),menu.getItemName(),menu.getPrice(),menu.getDesc(),menu.getRating());
-	}
-	else 
-	{
-    RestaurantMenu restaurantMenu = new RestaurantMenu("not found",null,null,null,null,null,null);
-    return restaurantMenu;
-	}
-  }
-    public RestaurantMenu getfallbackMenuDetails(String id) {
-    	return new RestaurantMenu("Server Down","not found","not found","not found","not found","not found","not found");
-    }
-}
+   // return new RestaurantMenu(restaurants.getRestaurantId(),restaurants.getRestaurantName(),menu.getId(),menu.getItemName(),menu.getPrice(),menu.getDesc(),menu.getRating());
+	//}
+	//else 
+	//{
+  //  RestaurantMenu restaurantMenu = new RestaurantMenu("not found",null,null,null,null,null,null);
+  //  return restaurantMenu;
+///	}
+ // }
+   // public RestaurantMenu getfallbackMenuDetails(String id) {
+  //	return new RestaurantMenu("Server Down","not found","not found","not found","not found","not found","not found");
+   // }

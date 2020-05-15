@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import com.cts.model.Restaurants;
-import com.cts.model.RestaurantMenu;
+import com.cts.model.AggregatorMenu;
 import com.cts.service.MenuService;
 
 
@@ -30,7 +30,7 @@ import com.cts.service.MenuService;
     }
     
     @RequestMapping(value = "/restaurant/{id}/menu")
-    public RestaurantMenu getMenu(@PathVariable String id) 
+    public AggregatorMenu getMenu(@PathVariable String id) 
     {
     return menuService.getMenuDetails(id);
     }

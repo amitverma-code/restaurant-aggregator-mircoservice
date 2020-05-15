@@ -12,6 +12,8 @@ import lombok.Setter;
 @ConfigurationProperties("app")
 public class AppProperties {
 private String fullList;
-private String menu;
+private String menurestaurant1;
+private String menurestaurant2;
+private String byId;
 
 }
